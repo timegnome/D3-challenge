@@ -80,7 +80,15 @@ function renderCircles(circlesGroup, newXScale, newYScale, chosenXAxis, chosenYA
 
   return circlesGroup;
 }
+function renderLables(circlesLables, newXScale, newYScale, chosenXAxis, chosenYAxis) {
 
+  circlesLables.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[chosenXAxis])-10)
+    .attr("y", d => newYScale(d[chosenYAxis])+5);
+
+  return circlesLables;
+}
 // function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 
@@ -148,8 +156,18 @@ d3.csv("assets/data/data.csv").then(function(Censusdata, err) {
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 20)
     .attr("fill", "red")
-    .attr("opacity", ".5")
-    .text(d=> d['abbr']);
+    .attr("opacity", ".7");
+
+  var circlesLables = chartGroup.selectAll(null)
+    .data(Censusdata)
+    .enter()
+    .append('text')
+    .attr("x", d =>  xLinearScale(d[chosenXAxis])-10)
+    .attr("y", d => yLinearScale(d[chosenYAxis])+5)
+    .text(d => d.abbr)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "15px")
+    .attr("fill", "white");
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -238,12 +256,15 @@ d3.csv("assets/data/data.csv").then(function(Censusdata, err) {
 
         //updates y axis with transition
         yAxis = renderYAxes(yLinearScale, yAxis)
-        // updates circles with new x values
+        // updates circles with new x and y values
         circlesGroup = renderCircles(circlesGroup, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
-
+        
+        // updates labels with new values
+        circlesLables = renderLables(circlesLables, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
+        console.log(circlesLables)
         // changes classes to change bold text
         switch (chosenXAxis) {
           case 'poverty':
