@@ -14,7 +14,7 @@ var height = svgHeight - margin.top - margin.bottom;
 // Create an SVG wrapper, append an SVG group that will hold our chart,
 // and shift the latter by left and top margins.
 var svg = d3
-  .select(".chart")
+  .select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
@@ -25,7 +25,7 @@ var chartGroup = svg.append("g")
 
 // Initial Params
 var choice_dict = {'poverty': 'In Poverty','income' :'Household Income(Median)',
-                  'age': 'Age', 'smoke': 'Smoke', 'obesity': 'Obesity', 'healthcare':'Lacks Heathcare'
+                  'age': 'Age', 'smokes': 'Smoke', 'obesity': 'Obesity', 'healthcare':'Lacks Heathcare'
 }
 var chosenXAxis = "poverty";
 var chosenYAxis = "obesity";
@@ -43,7 +43,7 @@ function xScale(Censusdata, chosenXAxis) {
 function yScale(Censusdata, chosenYAxis) {
   // create scales
   var yLinearScale = d3.scaleLinear()
-    .domain(d3.extent(Censusdata, d => d[chosenYAxis]))
+    .domain([d3.max(Censusdata, d => d[chosenYAxis])*1.04,d3.min(Censusdata, d => d[chosenYAxis])])
     .range([height,0]);
 
   return yLinearScale;
@@ -105,7 +105,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 }
 
 // Retrieve data from the CSV file and execute everything below
-d3.csv("data.csv").then(function(Censusdata, err) {
+d3.csv("assets/data/data.csv").then(function(Censusdata, err) {
   if (err) throw err;
 
   // parse data
@@ -161,6 +161,7 @@ d3.csv("data.csv").then(function(Censusdata, err) {
     .attr("value", "poverty") // value to grab for event listener
     .classed("active", true)
     .text("Poverty (%)");
+
   var ageLabel = labelsGroup.append("text")
     .attr( 'id',  'xaxis')  
     .attr("x", 0)
@@ -168,6 +169,7 @@ d3.csv("data.csv").then(function(Censusdata, err) {
     .attr("value", "age") // value to grab for event listener
     .classed("inactive", true)
     .text("Age (Median)");
+
   var incomeLabel = labelsGroup.append("text")
     .attr( 'id',  'xaxis')
     .attr("x", 0)
@@ -178,9 +180,9 @@ d3.csv("data.csv").then(function(Censusdata, err) {
 
   var obesityLabel = labelsGroup.append("text")
     .attr( 'id',  'yaxis')
+    .attr("x", 0 +svgWidth/4)
+    .attr("y", 0 - svgHeight )
     .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("value", "obesity") // value to grab for event listener
     .classed("active", true)
@@ -188,19 +190,19 @@ d3.csv("data.csv").then(function(Censusdata, err) {
 
   var smokeLabel = labelsGroup.append("text")
     .attr( 'id',  'yaxis')
+    .attr("x", 0 +svgWidth/4)
+    .attr("y", 20 - svgHeight )
     .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
-    .attr("value", "smoke") // value to grab for event listener
+    .attr("value", "smokes") // value to grab for event listener
     .classed("inactive", true)
     .text("Smoke (%)");
 
   var healthcareLabel = labelsGroup.append("text")
     .attr( 'id',  'yaxis')
+    .attr("x", 0 +svgWidth/4)
+    .attr("y", 40 - svgHeight )
     .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("value", "healthcare") // value to grab for event listener
     .classed("inactive", true)
@@ -221,7 +223,7 @@ d3.csv("data.csv").then(function(Censusdata, err) {
           chosenXAxis = value;
         else
           chosenYAxis = value;
-        // console.log(chosenXAxis)
+        console.log(value)
 
         // functions here found above csv import
         // updates x scale for new data
