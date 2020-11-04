@@ -34,7 +34,7 @@ var chosenYAxis = "obesity";
 function xScale(Censusdata, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain(d3.extent(Censusdata, d => d[chosenXAxis]))
+    .domain([d3.min(Censusdata, d => d[chosenXAxis]) *.94,d3.max(Censusdata, d => d[chosenXAxis])*1.03])
     .range([0, width]);
 
   return xLinearScale;
@@ -148,7 +148,8 @@ d3.csv("assets/data/data.csv").then(function(Censusdata, err) {
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 20)
     .attr("fill", "red")
-    .attr("opacity", ".5");
+    .attr("opacity", ".5")
+    .text(d=> d['abbr']);
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
