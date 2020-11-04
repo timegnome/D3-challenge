@@ -94,7 +94,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 
   var toolTip = d3.tip()
     .attr("class", "tooltip")
-    .offset([80, -60])
+    .offset([0, 0])
     .html(function(d) {
       return (`${d.state}<br>${choice_dict[chosenXAxis]}: ${d[chosenXAxis]}%<br>${choice_dict[chosenYAxis]}: ${d[chosenYAxis]}%`);
     });
@@ -313,7 +313,7 @@ d3.csv("assets/data/data.csv").then(function(Censusdata, err) {
             .classed("active", false)
             .classed("inactive", true);
             break;
-          case 'smoke':
+          case 'smokes':
             obesityLabel
             .classed("active", false)
             .classed("inactive", true);
@@ -324,7 +324,7 @@ d3.csv("assets/data/data.csv").then(function(Censusdata, err) {
             .classed("active", false)
             .classed("inactive", true);
             break;
-          case 'healtcare':
+          case 'healthcare':
             obesityLabel
             .classed("active", false)
             .classed("inactive", true);
