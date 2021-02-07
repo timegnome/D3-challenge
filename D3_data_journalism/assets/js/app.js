@@ -1,3 +1,4 @@
+// Create the background borders sizing for the visual
 var svgWidth = 960;
 var svgHeight = 500;
 
@@ -42,8 +43,9 @@ function xScale(Censusdata, chosenXAxis) {
 }
 function yScale(Censusdata, chosenYAxis) {
   // create scales
+  // uses choice from the users click event
   var yLinearScale = d3.scaleLinear()
-    .domain([d3.max(Censusdata, d => d[chosenYAxis])*1.04,d3.min(Censusdata, d => d[chosenYAxis])])
+    .domain([d3.min(Censusdata, d => d[chosenYAxis]),d3.max(Censusdata, d => d[chosenYAxis])*1.04])
     .range([height,0]);
 
   return yLinearScale;
@@ -96,7 +98,14 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     .attr("class", "tooltip")
     .offset([0, 0])
     .html(function(d) {
-      return (`${d.state}<br>${choice_dict[chosenXAxis]}: ${d[chosenXAxis]}%<br>${choice_dict[chosenYAxis]}: ${d[chosenYAxis]}%`);
+      if (choice_dict[chosenXAxis] == 'Age' || choice_dict[chosenXAxis] == 'Household Income(Median)')
+      {
+        return (`${d.state}<br>${choice_dict[chosenXAxis]}: ${d[chosenXAxis]}<br>${choice_dict[chosenYAxis]}: ${d[chosenYAxis]}%`);
+      }
+      else{
+        return (`${d.state}<br>${choice_dict[chosenXAxis]}: ${d[chosenXAxis]}%<br>${choice_dict[chosenYAxis]}: ${d[chosenYAxis]}%`);
+      }
+      
     });
 
   circlesGroup.call(toolTip);
